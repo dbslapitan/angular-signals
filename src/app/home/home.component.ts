@@ -7,6 +7,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessagesService} from "../messages/messages.service";
 import {catchError, from, throwError} from "rxjs";
 import {toObservable, toSignal, outputToObservable, outputFromObservable} from "@angular/core/rxjs-interop";
+import {CoursesServiceWithFetch} from "../services/courses-fetch.service";
 
 @Component({
     selector: 'home',
@@ -20,4 +21,24 @@ import {toObservable, toSignal, outputToObservable, outputFromObservable} from "
 })
 export class HomeComponent {
 
+  #courses = signal<Course[]>([]);
+
+  beginnerCourses = computed(() => {
+    const courses = this.#courses();
+    return courses.filter(course => course.category === "BEGINNER");
+  });
+
+  advanceCourses = computed(() => {
+    const courses = this.#courses();
+    return courses.filter(course => course.category === "ADVANCED");
+  });
+
+  constructor(private courseService: CoursesService) {
+    this.loadCourses().then(() => console.log("Courses loaded"));
+  }
+
+  async loadCourses(){
+    const courses = await this.courseService.loadCourses();
+    this.#courses.set(courses);
+  }
 }
