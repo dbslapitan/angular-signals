@@ -27,12 +27,12 @@ export class CoursesService {
   }
 
   async saveCourse(courseId: string, changes: Partial<Course>) {
-    const savedCourse$ = this.http.put(`${this.env.apiRoot}/courses/${courseId}`, changes);
+    const savedCourse$ = this.http.put<Course>(`${this.env.apiRoot}/courses/${courseId}`, changes);
     return firstValueFrom(savedCourse$);
   }
 
-  async deleteCourse(courseId: string, changes: Partial<Course>) {
-    const deletedCourse$ = this.http.delete(`${this.env.apiRoot}/courses/${courseId}`);
+  async deleteCourse(courseId: string) {
+    const deletedCourse$ = this.http.delete<{id: string}>(`${this.env.apiRoot}/courses/${courseId}`);
     return firstValueFrom(deletedCourse$);
   }
 }

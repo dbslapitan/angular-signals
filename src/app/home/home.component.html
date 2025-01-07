@@ -5,10 +5,10 @@
   </button>
   <mat-tab-group>
     <mat-tab label="Beginners">
-      <courses-card-list [courses]="beginnerCourses()" (onCourseUpdate)="courseUpdated($event)"/>
+      <courses-card-list [courses]="beginnerCourses()" (onCourseUpdate)="courseUpdated($event)" (onCourseDelete)="courseDeleted($event)"/>
     </mat-tab>
     <mat-tab label="Advanced">
-      <courses-card-list [courses]="advanceCourses()" (onCourseUpdate)="courseUpdated($event)"/>
+      <courses-card-list [courses]="advanceCourses()" (onCourseUpdate)="courseUpdated($event)"  (onCourseDelete)="courseDeleted($event)"/>
     </mat-tab>
   </mat-tab-group>
 </div>

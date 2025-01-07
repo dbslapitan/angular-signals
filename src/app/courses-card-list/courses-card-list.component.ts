@@ -17,6 +17,7 @@ export class CoursesCardListComponent {
   courseUpdated = output<Course>({
     alias: "onCourseUpdate"
   });
+  onCourseDelete = output<string>();
 
   constructor(public dialog: MatDialog) {}
 
@@ -27,5 +28,9 @@ export class CoursesCardListComponent {
       course
     });
     this.courseUpdated.emit(newCourse);
+  }
+
+  onDeleteCourse(id: string) {
+      this.onCourseDelete.emit(id);
   }
 }

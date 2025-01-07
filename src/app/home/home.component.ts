@@ -50,4 +50,14 @@ export class HomeComponent {
       return  newCourses;
     });
   }
+
+  async courseDeleted(id: string) {
+    try{
+      const courseDeleted = await this.courseService.deleteCourse(id);
+      this.#courses.update(courses => courses.filter(course => course.id !== id));
+    }
+    catch (error){
+      console.log(error);
+    }
+  }
 }
