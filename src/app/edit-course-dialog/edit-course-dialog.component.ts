@@ -50,7 +50,22 @@ export class EditCourseDialogComponent {
     if(this.data.mode === "update"){
       await this.saveCourse(this.data?.course!.id, this.form.value as Partial<Course>);
     }
+    else if(this.data.mode === "create"){
+      await this.createCourse(this.form.value as Partial<Course>);
+    }
   }
+
+  async createCourse(course: Partial<Course>) {
+    try {
+      const newCourse = this.coursesService.createCourse(course);
+      this.matDialogRef.close(newCourse);
+    }
+    catch (err){
+      console.error(err);
+    }
+
+  }
+
   async saveCourse(courseId: string, changes: Partial<Course>) {
     try {
       const updateCourse = this.coursesService.saveCourse(courseId, changes);

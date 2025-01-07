@@ -8,6 +8,8 @@ import {MessagesService} from "../messages/messages.service";
 import {catchError, from, throwError} from "rxjs";
 import {toObservable, toSignal, outputToObservable, outputFromObservable} from "@angular/core/rxjs-interop";
 import {CoursesServiceWithFetch} from "../services/courses-fetch.service";
+import {openEditCourseDialog} from "../edit-course-dialog/edit-course-dialog.component";
+import {createCourse} from "../../../server/create-course.route";
 
 @Component({
     selector: 'home',
@@ -33,7 +35,7 @@ export class HomeComponent {
     return courses.filter(course => course.category === "ADVANCED");
   });
 
-  constructor(private courseService: CoursesService) {
+  constructor(private courseService: CoursesService, private matDialog: MatDialog) {
     this.loadCourses();
   }
 
@@ -58,6 +60,16 @@ export class HomeComponent {
     }
     catch (error){
       console.log(error);
+    }
+  }
+
+  async onAddCourse() {
+    const newCourse = await openEditCourseDialog(this.matDialog, {
+      mode: "create",
+      title: "Create New Course"
+    });
+    if(newCourse){
+      this.#courses.update(courses => [newCourse, ...courses]);
     }
   }
 }
