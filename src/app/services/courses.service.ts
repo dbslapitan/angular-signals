@@ -16,10 +16,23 @@ export class CoursesService {
   constructor( private http: HttpClient) {}
 
   async loadCourses(): Promise<Course[]> {
-    this.http.get<GetCoursesResponse>(`${this.env.apiRoot}/courses/`).subscribe(data => console.log("data", data));
     const courses$ = this.http.get<GetCoursesResponse>(`${this.env.apiRoot}/courses/`);
     const response = await firstValueFrom(courses$);
     return  response.courses;
   }
 
+  async createCourse(course: Partial<Course>): Promise<Course> {
+    const course$ = this.http.post<Course>(`${this.env.apiRoot}/courses/`, course);
+    return firstValueFrom(course$);
+  }
+
+  async saveCourse(courseId: string, changes: Partial<Course>) {
+    const savedCourse$ = this.http.put(`${this.env.apiRoot}/courses/${courseId}`, changes);
+    return firstValueFrom(savedCourse$);
+  }
+
+  async deleteCourse(courseId: string, changes: Partial<Course>) {
+    const deletedCourse$ = this.http.delete(`${this.env.apiRoot}/courses/${courseId}`);
+    return firstValueFrom(deletedCourse$);
+  }
 }

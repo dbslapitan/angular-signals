@@ -34,11 +34,20 @@ export class HomeComponent {
   });
 
   constructor(private courseService: CoursesService) {
-    this.loadCourses().then(() => console.log("Courses loaded"));
+    this.loadCourses();
   }
 
   async loadCourses(){
     const courses = await this.courseService.loadCourses();
     this.#courses.set(courses);
+  }
+
+  courseUpdated(course: Course) {
+    this.#courses.update(courses => {
+      const index = courses.findIndex(c => c.id === course.id);
+      const newCourses = [...courses];
+      newCourses[index] = course;
+      return  newCourses;
+    });
   }
 }

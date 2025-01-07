@@ -1,4 +1,4 @@
-import {Component, effect, inject, signal} from '@angular/core';
+import {Component, effect, Inject, inject, signal} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
 import {Course} from "../models/course.model";
 import {EditCourseDialogData} from "./edit-course-dialog.data.model";
@@ -7,6 +7,8 @@ import {LoadingIndicatorComponent} from "../loading/loading.component";
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {CourseCategoryComboboxComponent} from "../course-category-combobox/course-category-combobox.component";
 import {CourseCategory} from "../models/course-category.model";
+import {DialogConfig} from "@angular/cdk/dialog";
+import {config, firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'edit-course-dialog',
@@ -21,5 +23,53 @@ import {CourseCategory} from "../models/course-category.model";
 })
 export class EditCourseDialogComponent {
 
+  form = this.fb.group({
+    title: [""],
+    longDescription: [""],
+    category: [""],
+    iconUrl: [""]
+  })
 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: EditCourseDialogData,
+              private matDialogRef: MatDialogRef<EditCourseDialogComponent>,
+              private fb: FormBuilder, private coursesService: CoursesService ) {
+    this.form.patchValue({
+      title: data.course?.title,
+      longDescription: data.course?.longDescription,
+      iconUrl: data.course?.iconUrl,
+      category: data.course?.category
+    })
+  }
+
+  onCancel() {
+    this.matDialogRef.close();
+  }
+
+  async onSave() {
+    const partialCourse = this.form.value as Partial<Course>;
+    if(this.data.mode === "update"){
+      await this.saveCourse(this.data?.course!.id, this.form.value as Partial<Course>);
+    }
+  }
+  async saveCourse(courseId: string, changes: Partial<Course>) {
+    try {
+      const updateCourse = this.coursesService.saveCourse(courseId, changes);
+      this.matDialogRef.close(updateCourse);
+    }
+    catch (err){
+      console.error(err);
+      alert("Failed to save course")
+    }
+  }
+}
+
+export async function openEditCourseDialog(dialog: MatDialog, data: EditCourseDialogData) {
+  const config = new MatDialogConfig();
+  config.disableClose = true;
+  config.width = "400px";
+  config.data = data;
+
+  const close$ = dialog.open(EditCourseDialogComponent, config).afterClosed();
+
+  return firstValueFrom(close$);
 }
