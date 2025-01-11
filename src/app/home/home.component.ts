@@ -44,15 +44,11 @@ export class HomeComponent {
 
   async loadCourses(){
     try {
-      this.loadingService.loadingOn();
       const courses = await this.courseService.loadCourses();
       this.#courses.set(courses);
     }
     catch (error){
       console.error(error);
-    }
-    finally {
-      this.loadingService.loadingOff();
     }
   }
 
