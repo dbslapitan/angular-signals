@@ -3,9 +3,13 @@ import {NextFunction} from "express";
 import {inject} from "@angular/core";
 import {LoadingService} from "../loading/loading.service";
 import {finalize} from "rxjs";
+import {SkipLoading} from "../loading/skip-loading.component";
 
 export const loadingInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const loadingService = inject(LoadingService);
+    if(req.context.get(SkipLoading)){
+      return next(req);
+    }
     loadingService.loadingOn();
     return next(req).pipe(
       finalize(() => loadingService.loadingOff())
