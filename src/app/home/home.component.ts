@@ -10,6 +10,7 @@ import {toObservable, toSignal, outputToObservable, outputFromObservable} from "
 import {CoursesServiceWithFetch} from "../services/courses-fetch.service";
 import {openEditCourseDialog} from "../edit-course-dialog/edit-course-dialog.component";
 import {createCourse} from "../../../server/create-course.route";
+import {LoadingService} from "../loading/loading.service";
 
 @Component({
     selector: 'home',
@@ -35,13 +36,24 @@ export class HomeComponent {
     return courses.filter(course => course.category === "ADVANCED");
   });
 
-  constructor(private courseService: CoursesService, private matDialog: MatDialog) {
+  constructor(private courseService: CoursesService,
+              private matDialog: MatDialog,
+              private loadingService: LoadingService) {
     this.loadCourses();
   }
 
   async loadCourses(){
-    const courses = await this.courseService.loadCourses();
-    this.#courses.set(courses);
+    try {
+      this.loadingService.loadingOn();
+      const courses = await this.courseService.loadCourses();
+      this.#courses.set(courses);
+    }
+    catch (error){
+      console.error(error);
+    }
+    finally {
+      this.loadingService.loadingOff();
+    }
   }
 
   courseUpdated(course: Course) {
