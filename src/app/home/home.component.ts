@@ -38,7 +38,7 @@ export class HomeComponent {
 
   constructor(private courseService: CoursesService,
               private matDialog: MatDialog,
-              private loadingService: LoadingService) {
+              private messagesService: MessagesService) {
     this.loadCourses();
   }
 
@@ -48,6 +48,7 @@ export class HomeComponent {
       this.#courses.set(courses);
     }
     catch (error){
+      this.messagesService.showMessage({text: "Error loading courses!", severity: "error"})
       console.error(error);
     }
   }
