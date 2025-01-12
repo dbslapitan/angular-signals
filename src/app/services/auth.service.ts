@@ -17,8 +17,15 @@ export class AuthService {
   isLoggedIn = computed(() => !!this.user());
 
   constructor(private http: HttpClient) {
+    const lsUser = localStorage.getItem(USER_STORAGE_KEY);
+    if (lsUser){
+      this.#userSignal.set(JSON.parse(lsUser));
+    }
     effect(() => {
-      console.log(this.#userSignal(), this.user(), this.isLoggedIn())
+      const user = this.user();
+      if (user) {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+      }
     });
   }
 
@@ -31,6 +38,7 @@ export class AuthService {
   }
 
   logout() {
+    localStorage.removeItem(USER_STORAGE_KEY);
     this.#userSignal.set(null);
   }
 }
