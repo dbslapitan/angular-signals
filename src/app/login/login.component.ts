@@ -3,6 +3,7 @@ import {Router, RouterLink} from "@angular/router";
 import {AuthService} from "../services/auth.service";
 import {MessagesService} from "../messages/messages.service";
 import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
+import {User} from "../models/user.model";
 
 @Component({
     selector: 'login',
@@ -20,11 +21,14 @@ export class LoginComponent {
     password: [""]
   });
 
-  constructor(private fb: FormBuilder, private messagesService: MessagesService) {
+  constructor(private fb: FormBuilder,
+              private messagesService: MessagesService,
+              private authServices: AuthService,
+              private router: Router) {
 
   }
 
-  onLogin() {
+  async onLogin() {
     try {
       const {email, password} = this.form.value;
       if(!email || !password){
@@ -32,7 +36,10 @@ export class LoginComponent {
           text: "Enter an email or password.",
           severity: "error"
         });
+        return;
       }
+      await this.authServices.login(email, password);
+      await this.router.navigate(['/']);
     }
     catch (error) {
       console.error(error);
