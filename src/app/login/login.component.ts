@@ -15,5 +15,31 @@ import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
 })
 export class LoginComponent {
 
+  form = this.fb.group({
+    email: [""],
+    password: [""]
+  });
 
+  constructor(private fb: FormBuilder, private messagesService: MessagesService) {
+
+  }
+
+  onLogin() {
+    try {
+      const {email, password} = this.form.value;
+      if(!email || !password){
+        this.messagesService.showMessage({
+          text: "Enter an email or password.",
+          severity: "error"
+        });
+      }
+    }
+    catch (error) {
+      console.error(error);
+      this.messagesService.showMessage({
+        text: "Login failed, please try again",
+        severity: "error"
+      });
+    }
+  }
 }
