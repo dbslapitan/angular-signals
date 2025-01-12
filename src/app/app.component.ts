@@ -1,5 +1,5 @@
-import {Component, inject} from '@angular/core';
-import {RouterLink, RouterOutlet} from '@angular/router';
+import {Component, effect, inject} from '@angular/core';
+import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {MatSidenav, MatSidenavContainer} from "@angular/material/sidenav";
 import {MatListItem, MatNavList} from "@angular/material/list";
 import {MatIcon} from "@angular/material/icon";
@@ -8,6 +8,7 @@ import {MatIconButton} from "@angular/material/button";
 import {LoadingIndicatorComponent} from "./loading/loading.component";
 import {MessagesComponent} from "./messages/messages.component";
 import {AuthService} from "./services/auth.service";
+import {routes} from "./app.routes";
 
 
 @Component({
@@ -23,7 +24,14 @@ export class AppComponent {
 
   isLoggedIn = this.authService.isLoggedIn;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+    ) {
   }
 
+  async onLogout() {
+    this.authService.logout();
+    await this.router.navigate(['/']);
+  }
 }

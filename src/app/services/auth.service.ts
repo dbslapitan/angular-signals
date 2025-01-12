@@ -14,11 +14,13 @@ export class AuthService {
 
   #userSignal= signal<User | null>(null);
   user = this.#userSignal.asReadonly();
+  isLoggedIn = computed(() => !!this.user());
 
   constructor(private http: HttpClient) {
+    effect(() => {
+      console.log(this.#userSignal(), this.user(), this.isLoggedIn())
+    });
   }
-
-  isLoggedIn = computed(() => !!this.user);
 
   async login(email: string, password: string): Promise<User> {
     const response$ = this.http.post<User>(`${environment.apiRoot}/login`, {email, password});
@@ -28,4 +30,7 @@ export class AuthService {
 
   }
 
+  logout() {
+    this.#userSignal.set(null);
+  }
 }
