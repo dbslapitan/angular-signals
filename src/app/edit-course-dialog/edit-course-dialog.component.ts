@@ -26,9 +26,10 @@ export class EditCourseDialogComponent {
   form = this.fb.group({
     title: [""],
     longDescription: [""],
-    category: [""],
     iconUrl: [""]
   })
+
+  category = signal<CourseCategory>("BEGINNER");
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: EditCourseDialogData,
               private matDialogRef: MatDialogRef<EditCourseDialogComponent>,
@@ -36,9 +37,9 @@ export class EditCourseDialogComponent {
     this.form.patchValue({
       title: data.course?.title,
       longDescription: data.course?.longDescription,
-      iconUrl: data.course?.iconUrl,
-      category: data.course?.category
-    })
+      iconUrl: data.course?.iconUrl
+    });
+    this.category.set(data?.course!.category);
   }
 
   onCancel() {
@@ -47,8 +48,10 @@ export class EditCourseDialogComponent {
 
   async onSave() {
     const partialCourse = this.form.value as Partial<Course>;
+    partialCourse.category = this.category();
+
     if(this.data.mode === "update"){
-      await this.saveCourse(this.data?.course!.id, this.form.value as Partial<Course>);
+      await this.saveCourse(this.data?.course!.id, partialCourse);
     }
     else if(this.data.mode === "create"){
       await this.createCourse(this.form.value as Partial<Course>);
