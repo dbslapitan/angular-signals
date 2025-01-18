@@ -39,7 +39,7 @@ export class EditCourseDialogComponent {
       longDescription: data.course?.longDescription,
       iconUrl: data.course?.iconUrl
     });
-    this.category.set(data?.course!.category);
+    this.category.set(data?.course?.category ?? "BEGINNER");
   }
 
   onCancel() {
